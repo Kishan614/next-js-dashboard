@@ -1,0 +1,4 @@
+{
+  "/api/popup-state/route": "app/api/popup-state/route.js",
+  "/page": "app/page.js"
+}
