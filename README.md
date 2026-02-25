@@ -13,9 +13,10 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Usage on the dashboard
 
-- **Show popup** – Toggle on to show the popup (on the dashboard and on any page using the bridge script); toggle off to hide it.
-- **Popup content** – Use the text area to set the message shown inside the popup. Content is saved automatically (debounced) and appears in the dashboard popup and on HubSpot/external pages. Line breaks are preserved; use plain text only (no HTML).
-- Close the popup by: turning the toggle off, clicking the × button, clicking the backdrop, or pressing Escape.
+The dashboard does **not** show a popup. It only controls when and what appears on pages where you embed the script (e.g. HubSpot).
+
+- **Show popup** – Toggle on to show the popup on those pages; toggle off to hide it.
+- **Popup content** – Use the text area to set the message shown inside the popup. Content is saved automatically (debounced). Line breaks are preserved; use plain text only (no HTML).
 
 ## Showing the popup on HubSpot (or any other site)
 

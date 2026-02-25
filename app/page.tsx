@@ -70,15 +70,6 @@ export default function DashboardPage() {
     if (!contentDirty) setEditContent(content);
   }, [content, contentDirty]);
 
-  useEffect(() => {
-    if (!popupOpen) return;
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setPopupOpen(false);
-    };
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [popupOpen, setPopupOpen]);
-
   const handleContentChange = (value: string) => {
     setEditContent(value);
     setContentDirty(true);
@@ -95,9 +86,6 @@ export default function DashboardPage() {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
   }, []);
-
-  const displayContent =
-    (content || editContent).trim() || "Enter popup content above.";
 
   return (
     <main className="dashboard">
@@ -134,41 +122,6 @@ export default function DashboardPage() {
           <span className="dashboard__hint">Saving…</span>
         )}
       </section>
-
-      {popupOpen && (
-        <div
-          className="popup-backdrop"
-          onClick={() => setPopupOpen(false)}
-          role="button"
-          tabIndex={0}
-          aria-label="Close popup"
-        >
-          <div
-            className="popup"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="popup-title"
-          >
-            <div className="popup__header">
-              <h2 id="popup-title" className="popup__title">
-                Popup
-              </h2>
-              <button
-                type="button"
-                className="popup__close"
-                onClick={() => setPopupOpen(false)}
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </div>
-            <div className="popup__body" style={{ whiteSpace: "pre-wrap" }}>
-              {displayContent}
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
