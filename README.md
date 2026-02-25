@@ -52,15 +52,11 @@ Replace `https://your-dashboard.vercel.app` with your dashboard URL and paste th
     function fetchState() {
       return fetch(BASE + "/api/popup-state").then(function (r) { return r.json(); }).catch(function () { return { show: false, content: "" }; });
     }
-    function postState(show) {
-      return fetch(BASE + "/api/popup-state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ show: show }) }).catch(function () {});
-    }
     function hidePopup() { if (container && container.parentNode) container.parentNode.removeChild(container); container = null; }
-    function closePopup() { postState(false); hidePopup(); }
     function getBodyEl() { return container && container.querySelector("[data-popup-body]"); }
     function showPopup(data) {
       var content = (data && typeof data.content === "string") ? data.content : "";
-      var displayText = content.trim() || "Turn the switch off or click × to close.";
+      var displayText = content.trim() || "Turn the switch off on the dashboard to close.";
       if (container && container.parentNode) {
         var bodyEl = getBodyEl();
         if (bodyEl) { bodyEl.textContent = displayText; bodyEl.style.whiteSpace = "pre-wrap"; }
@@ -73,24 +69,18 @@ Replace `https://your-dashboard.vercel.app` with your dashboard URL and paste th
       var modal = document.createElement("div");
       modal.style.cssText = "background:#1e293b;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);max-width:24rem;width:100%;border:1px solid #334155;";
       var header = document.createElement("div");
-      header.style.cssText = "display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #334155;";
+      header.style.cssText = "padding:16px 20px;border-bottom:1px solid #334155;";
       var title = document.createElement("h2");
       title.textContent = "Popup";
       title.style.cssText = "font-size:1.125rem;font-weight:600;color:#e2e8f0;margin:0;";
-      var closeBtn = document.createElement("button");
-      closeBtn.type = "button";
-      closeBtn.setAttribute("aria-label", "Close");
-      closeBtn.textContent = "×";
-      closeBtn.style.cssText = "width:32px;height:32px;border:none;background:transparent;color:#94a3b8;font-size:1.5rem;cursor:pointer;border-radius:6px;";
-      closeBtn.onclick = function (e) { e.stopPropagation(); closePopup(); };
-      header.appendChild(title); header.appendChild(closeBtn); modal.appendChild(header);
+      header.appendChild(title);
+      modal.appendChild(header);
       var body = document.createElement("div");
       body.setAttribute("data-popup-body", "true");
       body.style.cssText = "padding:20px;color:#94a3b8;font-size:0.9375rem;line-height:1.6;white-space:pre-wrap;";
       body.textContent = displayText;
       modal.appendChild(body);
       overlay.appendChild(modal);
-      overlay.onclick = function (e) { if (e.target === overlay) closePopup(); };
       modal.onclick = function (e) { e.stopPropagation(); };
       container = overlay;
       document.body.appendChild(overlay);
@@ -107,4 +97,4 @@ Replace `https://your-dashboard.vercel.app` with your dashboard URL and paste th
 - **Toggle ON** in the dashboard → script sees `show: true` on the next poll (every 2s) → popup appears on the HubSpot page with the **Popup content** from the dashboard.
 - **Toggle OFF** in the dashboard → script sees `show: false` → popup is removed.
 - **Popup content** – Whatever you type in the dashboard text area is saved and shown in the popup on HubSpot; updates are picked up on the next poll.
-- **Close (×)** on the HubSpot popup → script sends `show: false` to the API → popup closes and the dashboard toggle will reflect off after its next sync (~3s).
+- The popup has no close button and cannot be closed by clicking the backdrop; it only closes when you turn the toggle **off** on the dashboard.

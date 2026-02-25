@@ -23,25 +23,11 @@
       .catch(function () { return { show: false, content: "" }; });
   }
 
-  function postState(show) {
-    if (!BASE) return Promise.resolve();
-    return fetch(apiUrl("/api/popup-state"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ show: show }),
-    }).catch(function () {});
-  }
-
   function hidePopup() {
     if (container && container.parentNode) {
       container.parentNode.removeChild(container);
     }
     container = null;
-  }
-
-  function closePopup() {
-    postState(false);
-    hidePopup();
   }
 
   function getBodyEl() {
@@ -50,7 +36,7 @@
 
   function showPopup(data) {
     var content = (data && typeof data.content === "string") ? data.content : "";
-    var displayText = content.trim() || "Turn the switch off on the dashboard or click \u00D7 to close.";
+    var displayText = content.trim() || "Turn the switch off on the dashboard to close.";
 
     if (container && container.parentNode) {
       var bodyEl = getBodyEl();
@@ -76,35 +62,14 @@
 
     var header = document.createElement("div");
     header.style.cssText =
-      "display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #334155;";
+      "padding:16px 20px;border-bottom:1px solid #334155;";
 
     var title = document.createElement("h2");
     title.id = "popup-bridge-title";
     title.textContent = "Popup";
     title.style.cssText = "font-size:1.125rem;font-weight:600;color:#e2e8f0;margin:0;";
 
-    var closeBtn = document.createElement("button");
-    closeBtn.type = "button";
-    closeBtn.setAttribute("aria-label", "Close");
-    closeBtn.textContent = "\u00D7";
-    closeBtn.style.cssText =
-      "width:32px;height:32px;border:none;background:transparent;color:#94a3b8;font-size:1.5rem;line-height:1;" +
-      "cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;";
-    closeBtn.onmouseover = function () {
-      closeBtn.style.background = "#334155";
-      closeBtn.style.color = "#e2e8f0";
-    };
-    closeBtn.onmouseout = function () {
-      closeBtn.style.background = "transparent";
-      closeBtn.style.color = "#94a3b8";
-    };
-    closeBtn.onclick = function (e) {
-      e.stopPropagation();
-      closePopup();
-    };
-
     header.appendChild(title);
-    header.appendChild(closeBtn);
     modal.appendChild(header);
 
     var body = document.createElement("div");
@@ -114,9 +79,6 @@
     modal.appendChild(body);
 
     overlay.appendChild(modal);
-    overlay.onclick = function (e) {
-      if (e.target === overlay) closePopup();
-    };
     modal.onclick = function (e) {
       e.stopPropagation();
     };
