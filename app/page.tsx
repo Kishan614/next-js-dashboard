@@ -7,13 +7,19 @@ const API = "/api/popup-state";
 function usePopupState() {
   const [popupOpen, setPopupOpen] = useState(false);
   const [content, setContent] = useState("");
+  const lastToggleRef = useRef<number>(0);
+  const TOGGLE_DEBOUNCE_MS = 5000;
 
   const fetchState = useCallback(async () => {
     try {
       const res = await fetch(API);
       const data = await res.json();
-      if (typeof data?.show === "boolean") setPopupOpen(data.show);
       if (typeof data?.content === "string") setContent(data.content);
+      // Don’t overwrite toggle with API for a short time after user toggled (avoids serverless stale read / race)
+      const now = Date.now();
+      if (now - lastToggleRef.current > TOGGLE_DEBOUNCE_MS && typeof data?.show === "boolean") {
+        setPopupOpen(data.show);
+      }
     } catch {
       // ignore
     }
@@ -21,6 +27,7 @@ function usePopupState() {
 
   const setShow = useCallback(
     async (show: boolean) => {
+      lastToggleRef.current = Date.now();
       setPopupOpen(show);
       try {
         await fetch(API, {
@@ -29,7 +36,7 @@ function usePopupState() {
           body: JSON.stringify({ show }),
         });
       } catch {
-        setPopupOpen((prev) => !prev);
+        // Keep user’s choice; don’t revert so toggle doesn’t flip back on failure
       }
     },
     []
