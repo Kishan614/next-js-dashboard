@@ -15,10 +15,10 @@ function usePopupState() {
       const res = await fetch(API);
       const data = await res.json();
       if (typeof data?.content === "string") setContent(data.content);
-      // Don’t overwrite toggle with API for a short time after user toggled (avoids serverless stale read / race)
+      // Don’t Only sync show:true from API (e.g. initial load). Toggle is turned off only when you click it, never by the API.
       const now = Date.now();
-      if (now - lastToggleRef.current > TOGGLE_DEBOUNCE_MS && typeof data?.show === "boolean") {
-        setPopupOpen(data.show);
+      if (now - lastToggleRef.current > TOGGLE_DEBOUNCE_MS && data?.show === true) {
+        setPopupOpen(true);
       }
     } catch {
       // ignore
