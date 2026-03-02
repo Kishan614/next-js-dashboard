@@ -12,19 +12,21 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-export function GET() {
-  const show = getPopupState();
-  const content = getPopupContent();
+export async function GET() {
+  const show = await getPopupState();
+  const content = await getPopupContent();
   return NextResponse.json({ show, content }, { headers: CORS_HEADERS });
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (typeof body?.show === "boolean") setPopupState(body.show);
-    if (typeof body?.content === "string") setPopupContent(body.content);
+    if (typeof body?.show === "boolean") await setPopupState(body.show);
+    if (typeof body?.content === "string") await setPopupContent(body.content);
+    const show = await getPopupState();
+    const content = await getPopupContent();
     return NextResponse.json(
-      { ok: true, show: getPopupState(), content: getPopupContent() },
+      { ok: true, show, content },
       { headers: CORS_HEADERS }
     );
   } catch {

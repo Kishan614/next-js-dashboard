@@ -26,7 +26,21 @@ The dashboard exposes an API that the bridge script polls. When the toggle is **
 
 Deploy this Next.js app so it’s reachable at a public URL (e.g. `https://your-dashboard.vercel.app`). The script must be able to call `https://your-dashboard.vercel.app/api/popup-state` from the browser.
 
-**Popup state is persisted to disk** (`data/popup-state.json`) so the toggle and content survive server restarts, sleep, and logoff. The popup only closes when you turn the switch off on the dashboard. For this to work, the server must have a writable filesystem (e.g. VPS, Railway, Render). On Vercel the filesystem is read-only, so state will reset on cold starts unless you add a database or [Vercel KV](https://vercel.com/docs/storage/vercel-kv).
+**Persistence:** Toggle and content are persisted so they survive restarts. The app uses **Upstash Redis** when `UPSTASH_REDIS_REST_URL` is set (recommended on Vercel); otherwise it uses a file (`data/popup-state.json`) on hosts with a writable filesystem (e.g. VPS, Railway).
+
+#### Upstash Redis (recommended on Vercel)
+
+1. In the [Vercel Dashboard](https://vercel.com/dashboard), open your project (or create one and connect this repo).
+2. Go to **Storage** → **Create Database**, or install the [Upstash Redis integration](https://vercel.com/integrations/upstash) from the Vercel Marketplace (search “Redis” or “Upstash”).
+3. Create a Redis database and connect it to your project. Vercel will add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to your project.
+4. Redeploy. The app will persist popup state in Redis.
+
+If you set env vars yourself (e.g. from [Upstash Console](https://console.upstash.com/)):
+
+- `UPSTASH_REDIS_REST_URL` – your Redis REST URL (e.g. `https://xxx.upstash.io`)
+- `UPSTASH_REDIS_REST_TOKEN` – your Redis REST token
+
+Then run `npm install` (the `@upstash/redis` package is already in the repo).
 
 ### 2. Add the script on HubSpot
 
