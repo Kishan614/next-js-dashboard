@@ -26,6 +26,8 @@ The dashboard exposes an API that the bridge script polls. When the toggle is **
 
 Deploy this Next.js app so it’s reachable at a public URL (e.g. `https://your-dashboard.vercel.app`). The script must be able to call `https://your-dashboard.vercel.app/api/popup-state` from the browser.
 
+**Popup state is persisted to disk** (`data/popup-state.json`) so the toggle and content survive server restarts, sleep, and logoff. The popup only closes when you turn the switch off on the dashboard. For this to work, the server must have a writable filesystem (e.g. VPS, Railway, Render). On Vercel the filesystem is read-only, so state will reset on cold starts unless you add a database or [Vercel KV](https://vercel.com/docs/storage/vercel-kv).
+
 ### 2. Add the script on HubSpot
 
 In HubSpot: **Settings → Website → Pages → Default page options**, or edit a specific page, and add **Custom HTML** (or use a tracking code / embed block). Use one of the options below.
