@@ -53,7 +53,7 @@ Replace `https://your-dashboard.vercel.app` with your dashboard URL:
 <script>
   window.DASHBOARD_POPUP_API_URL = "https://your-dashboard.vercel.app";
 </script>
-<script src="https://your-dashboard.vercel.app/popup-bridge.js" async></script>
+<script src="https://your-dashboard.vercel.app/plugin.js" async></script>
 ```
 
 **Option B – Inline script (no extra file)**  
