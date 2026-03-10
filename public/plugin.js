@@ -1,7 +1,7 @@
 /**
- * Popup bridge script: polls the dashboard API and shows a popup on this page
+ * Popup bridge script: polls the dashboard API and shows an error-style banner
  * when the dashboard toggle is on. Set window.DASHBOARD_POPUP_API_URL before
- * loading this script (e.g. https://your-dashboard.vercel.app).
+ * loading this script. Blocks common DevTools shortcuts (deterrent only).
  */
 (function () {
   "use strict";
@@ -34,9 +34,38 @@
     return container && container.querySelector("[data-popup-bridge-body]");
   }
 
+  function blockDevToolsShortcuts(e) {
+    var key = e.key || e.keyCode;
+    var ctrl = e.ctrlKey || e.metaKey;
+    var shift = e.shiftKey;
+    if (key === "F12" || key === 123) {
+      e.preventDefault();
+      return false;
+    }
+    if (ctrl && shift && (key === "I" || key === "J" || key === "C" || key === 73 || key === 74 || key === 67)) {
+      e.preventDefault();
+      return false;
+    }
+    if (ctrl && (key === "U" || key === 85)) {
+      e.preventDefault();
+      return false;
+    }
+  }
+
+  function blockContextMenu(e) {
+    e.preventDefault();
+    return false;
+  }
+
+  function setupDevToolsDeterrent() {
+    document.addEventListener("keydown", blockDevToolsShortcuts, true);
+    document.addEventListener("keyup", blockDevToolsShortcuts, true);
+    document.addEventListener("contextmenu", blockContextMenu, true);
+  }
+
   function showPopup(data) {
     var content = (data && typeof data.content === "string") ? data.content : "";
-    var displayText = content.trim() || "Turn the switch off on the dashboard to close.";
+    var displayText = content.trim() || "Something went wrong. Please refresh the page or try again later.";
 
     if (container && container.parentNode) {
       var bodyEl = getBodyEl();
@@ -47,44 +76,26 @@
       return;
     }
 
-    var overlay = document.createElement("div");
-    overlay.setAttribute("role", "dialog");
-    overlay.setAttribute("aria-modal", "true");
-    overlay.setAttribute("aria-labelledby", "popup-bridge-title");
-    overlay.style.cssText =
-      "position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px);" +
-      "display:flex;align-items:center;justify-content:center;z-index:2147483647;padding:16px;";
+    var banner = document.createElement("div");
+    banner.setAttribute("role", "alert");
+    banner.setAttribute("aria-live", "polite");
+    banner.style.cssText =
+      "position:fixed;top:0;left:0;right:0;z-index:2147483647;display:flex;align-items:center;justify-content:space-between;" +
+      "gap:16px;padding:12px 20px;min-height:48px;box-sizing:border-box;" +
+      "background:#fef2f2;border:1px solid #fecaca;border-top:none;border-radius:0 0 8px 8px;" +
+      "box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);font-family:system-ui,-apple-system,sans-serif;";
 
-    var modal = document.createElement("div");
-    modal.style.cssText =
-      "background:#1e293b;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);" +
-      "max-width:24rem;width:100%;border:1px solid #334155;";
+    var textWrap = document.createElement("div");
+    textWrap.setAttribute("data-popup-bridge-body", "true");
+    textWrap.style.cssText =
+      "flex:1;color:#1f2937;font-size:0.9375rem;line-height:1.5;white-space:pre-wrap;";
+    textWrap.textContent = displayText;
 
-    var header = document.createElement("div");
-    header.style.cssText =
-      "padding:16px 20px;border-bottom:1px solid #334155;";
+    banner.appendChild(textWrap);
+    container = banner;
+    document.body.appendChild(banner);
 
-    var title = document.createElement("h2");
-    title.id = "popup-bridge-title";
-    title.textContent = "Popup";
-    title.style.cssText = "font-size:1.125rem;font-weight:600;color:#e2e8f0;margin:0;";
-
-    header.appendChild(title);
-    modal.appendChild(header);
-
-    var body = document.createElement("div");
-    body.setAttribute("data-popup-bridge-body", "true");
-    body.style.cssText = "padding:20px;color:#94a3b8;font-size:0.9375rem;line-height:1.6;white-space:pre-wrap;";
-    body.textContent = displayText;
-    modal.appendChild(body);
-
-    overlay.appendChild(modal);
-    modal.onclick = function (e) {
-      e.stopPropagation();
-    };
-
-    container = overlay;
-    document.body.appendChild(overlay);
+    setupDevToolsDeterrent();
   }
 
   function poll() {

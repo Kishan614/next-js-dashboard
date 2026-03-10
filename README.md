@@ -110,7 +110,8 @@ Replace `https://your-dashboard.vercel.app` with your dashboard URL and paste th
 
 ### 3. Behaviour
 
-- **Toggle ON** in the dashboard → script sees `show: true` on the next poll (every 2s) → popup appears on the HubSpot page with the **Popup content** from the dashboard.
-- **Toggle OFF** in the dashboard → script sees `show: false` → popup is removed.
-- **Popup content** – Whatever you type in the dashboard text area is saved and shown in the popup on HubSpot; updates are picked up on the next poll.
-- The popup has no close button and cannot be closed by clicking the backdrop; it only closes when you turn the toggle **off** on the dashboard.
+- **Toggle ON** in the dashboard → script sees `show: true` on the next poll (every 2s) → an **error-style banner** appears at the top of the page (light pink/red background, red border, rounded corners) with the **Popup content** from the dashboard. Default text: "Something went wrong. Please refresh the page or try again later."
+- **Toggle OFF** in the dashboard → script sees `show: false` → the banner is removed.
+- **Popup content** – Whatever you type in the dashboard text area is shown in the banner; updates are picked up on the next poll.
+- The banner has no close button; it only closes when you turn the toggle **off** on the dashboard.
+- **DevTools deterrent** (hosted `plugin.js` only): The script blocks the keyboard shortcuts F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U and disables right-click (context menu) to make casual inspection harder. This cannot fully prevent determined users from opening DevTools; browsers do not allow sites to disable them completely.
