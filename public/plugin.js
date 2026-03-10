@@ -86,13 +86,13 @@
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-live", "polite");
     overlay.style.cssText =
-      "position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;" +
+      "position:fixed;inset:0;z-index:2147483647;display:flex;align-items:flex-start;justify-content:center;padding:15vh 0 24px;box-sizing:border-box;" +
       "background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);font-family:system-ui,-apple-system,sans-serif;";
 
     var modal = document.createElement("div");
     modal.style.cssText =
       "background:#fef2f2;border:1px solid #fecaca;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);" +
-      "max-width:32rem;width:100%;min-width:20rem;padding:28px 32px;box-sizing:border-box;";
+      "width:70vw;max-width:70%;padding:28px 32px;box-sizing:border-box;";
 
     var textWrap = document.createElement("div");
     textWrap.setAttribute("data-popup-bridge-body", "true");
