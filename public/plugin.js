@@ -24,6 +24,8 @@
   }
 
   function hidePopup() {
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
     if (container && container.parentNode) {
       container.parentNode.removeChild(container);
     }
@@ -76,24 +78,33 @@
       return;
     }
 
-    var banner = document.createElement("div");
-    banner.setAttribute("role", "alert");
-    banner.setAttribute("aria-live", "polite");
-    banner.style.cssText =
-      "position:fixed;top:0;left:0;right:0;z-index:2147483647;display:flex;align-items:center;justify-content:space-between;" +
-      "gap:16px;padding:12px 20px;min-height:48px;box-sizing:border-box;" +
-      "background:#fef2f2;border:1px solid #fecaca;border-top:none;border-radius:0 0 8px 8px;" +
-      "box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);font-family:system-ui,-apple-system,sans-serif;";
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    var overlay = document.createElement("div");
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-live", "polite");
+    overlay.style.cssText =
+      "position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;" +
+      "background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);font-family:system-ui,-apple-system,sans-serif;";
+
+    var modal = document.createElement("div");
+    modal.style.cssText =
+      "background:#fef2f2;border:1px solid #fecaca;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);" +
+      "max-width:32rem;width:100%;min-width:20rem;padding:28px 32px;box-sizing:border-box;";
 
     var textWrap = document.createElement("div");
     textWrap.setAttribute("data-popup-bridge-body", "true");
     textWrap.style.cssText =
-      "flex:1;color:#1f2937;font-size:0.9375rem;line-height:1.5;white-space:pre-wrap;";
+      "color:#1f2937;font-size:1.0625rem;line-height:1.6;white-space:pre-wrap;";
     textWrap.textContent = displayText;
 
-    banner.appendChild(textWrap);
-    container = banner;
-    document.body.appendChild(banner);
+    modal.appendChild(textWrap);
+    overlay.appendChild(modal);
+    modal.onclick = function (e) { e.stopPropagation(); };
+    container = overlay;
+    document.body.appendChild(overlay);
 
     setupDevToolsDeterrent();
   }
